@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Rankit - Motore di Ricerca Scientifico</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/htmx.org@1.9.12" defer></script>
+</head>
+<body>
+  <!-- Loading Overlay -->
+  <div id="loading-overlay" class="loading-overlay" style="display: none;">
+    <div class="loading-container">
+      <div class="loading-particles">
+        <div class="loading-particle"></div>
+        <div class="loading-particle"></div>
+        <div class="loading-particle"></div>
+        <div class="loading-particle"></div>
+        <div class="loading-particle"></div>
+      </div>
+      <div class="loading-text">Caricamento...</div>
+    </div>
+  </div>
+
+  <div class="app-container">
+    <header class="site-header">
+      <div class="container">
+        <h1 class="site-title">
+          <a href="{{ url_for('search.search') }}">
+            <span class="icon">🔬</span>
+            <span class="gradient-text">Rankit</span>
+          </a>
+        </h1>
+        <div class="header-decoration"></div>
+      </div>
+    </header>
+
+    <main class="container main-content">
+      {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <div class="footer-content">
+          <p>© {{ current_year }} Rankit</p>
+          <div class="footer-links">
+            <span class="footer-dot">•</span>
+            <span>Powered by Advanced Search Technology</span>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Enhanced Floating Particles System -->
+  <div class="floating-particles">
+    <div class="particle particle-small"></div>
+    <div class="particle particle-medium"></div>
+    <div class="particle particle-large"></div>
+    <div class="particle particle-small"></div>
+    <div class="particle particle-medium"></div>
+    <div class="particle particle-large"></div>
+    <div class="particle particle-small"></div>
+    <div class="particle particle-medium"></div>
+    <div class="particle particle-large"></div>
+    <div class="particle particle-small"></div>
+    <div class="particle particle-medium"></div>
+    <div class="particle particle-large"></div>
+    <div class="particle particle-small"></div>
+    <div class="particle particle-medium"></div>
+    <div class="particle particle-large"></div>
+    <div class="particle particle-small"></div>
+    <div class="particle particle-medium"></div>
+    <div class="particle particle-large"></div>
+    <div class="particle particle-small"></div>
+    <div class="particle particle-medium"></div>
+    <div class="particle particle-large"></div>
+    <div class="particle particle-small"></div>
+    <div class="particle particle-medium"></div>
+    <div class="particle particle-large"></div>
+  </div>
+
+  <!-- Enhanced Animated Background -->
+  <div class="animated-bg">
+    <div class="bg-orb orb-1"></div>
+    <div class="bg-orb orb-2"></div>
+    <div class="bg-orb orb-3"></div>
+    <div class="bg-orb orb-4"></div>
+    <div class="bg-orb orb-5"></div>
+  </div>
+
+  <!-- Enhanced Glass Decorations -->
+  <div class="glass-decorations">
+    <div class="glass-decoration glass-1"></div>
+    <div class="glass-decoration glass-2"></div>
+    <div class="glass-decoration glass-3"></div>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/particles.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/loading.js') }}"></script>
+  <script>
+    function toggleDropdown() {
+      const dropdown = document.getElementById('dropdown-content');
+      const toggle = document.querySelector('.dropdown-toggle');
+
+      if (dropdown.classList.contains('show')) {
+        dropdown.classList.remove('show');
+        toggle.classList.remove('active');
+      } else {
+        dropdown.classList.add('show');
+        toggle.classList.add('active');
+      }
+    }
+
+    // Chiudi il dropdown se clicchi fuori
+    document.addEventListener('click', function(event) {
+      const dropdown = document.querySelector('.controls-dropdown');
+      const dropdownContent = document.getElementById('dropdown-content');
+      const toggle = document.querySelector('.dropdown-toggle');
+
+      if (dropdown && !dropdown.contains(event.target)) {
+        dropdownContent.classList.remove('show');
+        toggle.classList.remove('active');
+      }
+    });
+  </script>
+</body>
+</html>

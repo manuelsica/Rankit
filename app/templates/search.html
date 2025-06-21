@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="search-hero">
+  <div class="search-section-centered">
+    <form action="{{ url_for('search.search') }}" method="get" class="search-bar" id="search-form">
+      <div class="search-input-wrapper">
+        <input type="text" name="q" value="{{ query|default('') }}"
+               placeholder="Cerca articoli scientifici…" required>
+        <button type="submit" class="search-button morph-button">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.35-4.35"></path>
+          </svg>
+        </button>
+      </div>
+    </form>
+
+    <div class="controls-dropdown">
+      <button type="button" class="dropdown-toggle" onclick="toggleDropdown()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 6h18M3 12h18m-7 6h7"></path>
+        </svg>
+        Parametri di Ranking
+        <svg class="dropdown-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="6,9 12,15 18,9"></polyline>
+        </svg>
+      </button>
+
+      <div class="dropdown-content" id="dropdown-content">
+        <form id="weights" class="weights"
+              hx-post="{{ url_for('search.ranking') }}"
+              hx-trigger="change delay:300ms">
+          <div class="slider-group">
+            <label class="slider-label">
+              <span class="parameter-name">α</span>
+              <span class="parameter-value" id="val-alpha">0.6</span>
+            </label>
+            <div class="slider-wrapper">
+              <input type="range" name="alpha" min="0" max="1" step="0.05" value="0.6"
+                     oninput="document.getElementById('val-alpha').innerText=this.value">
+              <div class="slider-track"></div>
+            </div>
+          </div>
+          <div class="slider-group">
+            <label class="slider-label">
+              <span class="parameter-name">β</span>
+              <span class="parameter-value" id="val-beta">0.3</span>
+            </label>
+            <div class="slider-wrapper">
+              <input type="range" name="beta" min="0" max="1" step="0.05" value="0.3"
+                     oninput="document.getElementById('val-beta').innerText=this.value">
+              <div class="slider-track"></div>
+            </div>
+          </div>
+          <div class="slider-group">
+            <label class="slider-label">
+              <span class="parameter-name">γ</span>
+              <span class="parameter-value" id="val-gamma">0.1</span>
+            </label>
+            <div class="slider-wrapper">
+              <input type="range" name="gamma" min="0" max="1" step="0.05" value="0.1"
+                     oninput="document.getElementById('val-gamma').innerText=this.value">
+              <div class="slider-track"></div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% if results %}
+  <div class="results-section">
+    <div class="results-header">
+      <p class="meta">
+        <span class="results-count">{{ total }}</span> risultati trovati
+        <span class="separator">•</span>
+        <span class="page-info">pagina {{ page }}</span>
+      </p>
+    </div>
+
+    <ul class="cards">
+    {% for p in results %}
+      <li class="card" data-score="{{ p.score }}">
+        <div class="card-header">
+          <h3 class="card-title">{{ p.title }}</h3>
+          <div class="badge">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"></polygon>
+            </svg>
+            {{ '%.3f'|format(p.score) }}
+          </div>
+        </div>
+
+        <div class="card-meta">
+          <p class="info">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            <strong>Autori:</strong> {{ p.authors|join(', ') }}
+          </p>
+          <p class="info">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+            <strong>Pubblicato:</strong> {{ p.published_date }}
+          </p>
+        </div>
+
+        <div class="abstract">
+          <details>
+            <summary class="abstract-toggle">
+              <span class="toggle-text">Leggi abstract</span>
+              <svg class="toggle-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6,9 12,15 18,9"></polyline>
+              </svg>
+            </summary>
+            <div class="abstract-content">
+              <p>{{ p.abstract }}</p>
+            </div>
+          </details>
+        </div>
+      </li>
+    {% endfor %}
+    </ul>
+
+    <nav class="pagination">
+      {% if page > 1 %}
+        <a href="{{ url_for('search.search', q=query, page=page-1) }}" class="pagination-btn prev morph-button pagination-link">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="15,18 9,12 15,6"></polyline>
+          </svg>
+          Precedente
+        </a>
+      {% endif %}
+      <span class="current">{{ page }}</span>
+      {% if has_next %}
+        <a href="{{ url_for('search.search', q=query, page=page+1) }}" class="pagination-btn next morph-button pagination-link">
+          Successiva
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="9,18 15,12 9,6"></polyline>
+          </svg>
+        </a>
+      {% endif %}
+    </nav>
+  </div>
+
+{% elif query %}
+  <div class="no-results">
+    <div class="no-results-icon">
+      <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <circle cx="11" cy="11" r="8"></circle>
+        <path d="m21 21-4.35-4.35"></path>
+        <line x1="11" y1="8" x2="11" y2="12"></line>
+        <line x1="11" y1="16" x2="11.01" y2="16"></line>
+      </svg>
+    </div>
+    <h3>Nessun risultato trovato</h3>
+    <p>Nessun risultato per "<strong>{{ query }}</strong>".</p>
+    <p class="suggestion">Prova a utilizzare termini di ricerca diversi o più generali.</p>
+  </div>
+{% endif %}
+
+{% endblock %}
