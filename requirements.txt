@@ -1,0 +1,7 @@
+Flask>=3.0
+supabase>=2.3.5
+sentence-transformers>=2.6
+numpy>=1.26
+tqdm>=4.66
+requests>=2.32
+python-dotenv>=1.0
